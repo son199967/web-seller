@@ -1,41 +1,33 @@
 package son.nguyen.webseller.application;
 
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
-import org.springframework.beans.factory.annotation.Value;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.elasticsearch.client.ClientConfiguration;
+import org.springframework.data.elasticsearch.client.RestClients;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
-
-import java.net.InetAddress;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "son.nguyen.webseller.repository")
 public class EsConfig {
+private static final Logger logger= LoggerFactory.getLogger(EsConfig.class);
 
-    @Value("${elasticsearch.host}")
-    private String esHost;
-    @Value("${elasticsearch.port}")
-    private int esPort;
-    @Value("${elasticsearch.clustername}")
-    private String esClusterName;
-    @Bean
-    public Client client() throws Exception {
-        Settings esSettings = Settings.builder()
-                .put("client.transport.sniff", false)
-                .put("cluster.name", "docker-cluster")
+@Bean
+    public RestHighLevelClient client() {
+        ClientConfiguration clientConfiguration
+                = ClientConfiguration.builder()
+                .connectedTo("localhost:9200")
                 .build();
-        TransportClient client = new PreBuiltTransportClient(esSettings);
-        client.addTransportAddress(new TransportAddress(InetAddress.getByName(esHost), esPort));
-        return client;
+        logger.info("port:9200");
+        return RestClients.create(clientConfiguration).rest();
     }
+
     @Bean
-    public ElasticsearchOperations elasticsearchTemplate() throws Exception {
-        return new ElasticsearchTemplate(client());
+    public ElasticsearchOperations elasticsearchTemplate() {
+        return new ElasticsearchRestTemplate(client());
     }
 }

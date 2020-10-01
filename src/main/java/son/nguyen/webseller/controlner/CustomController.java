@@ -1,7 +1,8 @@
 package son.nguyen.webseller.controlner;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import son.nguyen.webseller.model.Book;
@@ -12,18 +13,19 @@ import java.util.List;
 
 @RestController
 public class CustomController {
-    @Autowired
+
     private BookService bookService;
 
-    @Autowired
-    private ElasticsearchTemplate esTemplate;
+
+    private ElasticsearchRestTemplate elasticsearchTemplate;
+@Autowired
+    public CustomController(BookService bookService, ElasticsearchRestTemplate elasticsearchTemplate) {
+        this.bookService = bookService;
+        this.elasticsearchTemplate = elasticsearchTemplate;
+    }
 
     @GetMapping(value = "/custom")
     public List<Book> custom() {
-        esTemplate.deleteIndex(Book.class);
-        esTemplate.createIndex(Book.class);
-        esTemplate.putMapping(Book.class);
-        esTemplate.refresh(Book.class);
 
         List<Book> bookList = new ArrayList<>();
         bookList.add(new Book(null, "Elasticsearch Basics", "Rambabu Posa", "23-FEB-2017"));
@@ -37,7 +39,7 @@ public class CustomController {
           l.add(save);
         }
         List<Book> result = new ArrayList<>();
-        bookService.findAll().forEach(result::add);
+        bookService.findByAuthor("Mkyong", PageRequest.of(0,3));
          return result;
     }
 }
