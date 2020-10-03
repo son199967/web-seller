@@ -1,4 +1,4 @@
-package son.nguyen.webseller.controlner;
+package son.nguyen.webseller.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,10 +8,10 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import son.nguyen.webseller.application.JwtTokenUtil;
+import son.nguyen.webseller.config.sercurity.JwtTokenUtil;
 import son.nguyen.webseller.model.JwtRequest;
 import son.nguyen.webseller.model.JwtResponse;
-import son.nguyen.webseller.model.UserDto;
+import son.nguyen.webseller.dto.UserDto;
 import son.nguyen.webseller.service.JwtUserDetailsService;
 
 @RestController
@@ -29,9 +29,9 @@ public class JwtAuthenticationController {
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
 
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 
@@ -42,9 +42,9 @@ public class JwtAuthenticationController {
     public ResponseEntity<?> saveUser(@RequestBody UserDto user) throws Exception {
         return ResponseEntity.ok(userDetailsService.save(user));
     }
-    private void authenticate(String username, String password) throws Exception {
+    private void authenticate(String email, String password) throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         } catch (DisabledException e) {
             throw new Exception("USER_DISABLED", e);
         } catch (BadCredentialsException e) {

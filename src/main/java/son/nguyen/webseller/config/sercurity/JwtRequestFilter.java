@@ -1,4 +1,4 @@
-package son.nguyen.webseller.application;
+package son.nguyen.webseller.config.sercurity;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;

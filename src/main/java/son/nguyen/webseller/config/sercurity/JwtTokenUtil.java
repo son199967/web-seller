@@ -1,4 +1,4 @@
-package son.nguyen.webseller.application;
+package son.nguyen.webseller.config.sercurity;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
