@@ -44,4 +44,33 @@ public class JwtUserDetailsService implements UserDetailsService {
         newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
         return userRepository.save(newUser);
     }
+    public UserDto getUserByEmail(String email) {
+        UserDao userDao  = userRepository.findByEmail(email);
+        UserDto userDto = convertDaoToDto(userDao);
+        return userDto;
+    }
+    private UserDto convertDaoToDto(UserDao userDao){
+        UserDto newUser=new UserDto();
+        newUser.setEmail(userDao.getEmail());
+        newUser.setAddress(userDao.getAddress());
+        newUser.setFistName(userDao.getFistName());
+        newUser.setLastName(userDao.getLastName());
+        newUser.setIdentification(userDao.getIdentification());
+        newUser.setUsername(userDao.getUsername());
+        newUser.setPassword(userDao.getPassword());
+        return newUser;
+
+    }
+    private UserDao convertDtoToDao(UserDto userDto){
+        UserDao newUser=new UserDao();
+        newUser.setEmail(userDto.getEmail());
+        newUser.setAddress(userDto.getAddress());
+        newUser.setFistName(userDto.getFistName());
+        newUser.setLastName(userDto.getLastName());
+        newUser.setIdentification(userDto.getIdentification());
+        newUser.setUsername(userDto.getUsername());
+        newUser.setPassword(userDto.getPassword());
+        return newUser;
+
+    }
 }
