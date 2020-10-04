@@ -9,6 +9,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import son.nguyen.webseller.config.USER;
 import son.nguyen.webseller.config.sercurity.JwtTokenUtil;
 import son.nguyen.webseller.model.JwtRequest;
 import son.nguyen.webseller.model.JwtResponse;
@@ -17,7 +18,6 @@ import son.nguyen.webseller.model.UserDao;
 import son.nguyen.webseller.service.JwtUserDetailsService;
 
 @RestController
-@CrossOrigin
 public class JwtAuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -29,7 +29,7 @@ public class JwtAuthenticationController {
     private JwtUserDetailsService userDetailsService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+    public ResponseEntity<?> loginUser(@RequestBody JwtRequest authenticationRequest) throws Exception {
 
         authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 
@@ -39,13 +39,23 @@ public class JwtAuthenticationController {
 
         return ResponseEntity.ok(new JwtResponse(token));
     }
-    @RequestMapping(value = "/infoUser", method = RequestMethod.POST)
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    public ResponseEntity<?> logoutUser( @RequestHeader String Authorization) throws Exception {
+        String token =Authorization.substring( 7,Authorization.length());
+//        final String token = jwtTokenUtil
+
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
+    @RequestMapping(value = "/infoUser", method = RequestMethod.GET)
     public ResponseEntity<?> showInfomationUser( @RequestHeader String Authorization) throws Exception {
-        UserDto userDto =userDetailsService.getUserByEmail(Authorization);
+       String token =Authorization.substring( 7,Authorization.length());
+        String email = jwtTokenUtil.getUsernameFromToken(token);
+        UserDto userDto =userDetailsService.getUserByEmail(email);
         return ResponseEntity.ok(userDto);
     }
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<?> saveUser(@RequestBody UserDto user) throws Exception {
+    public ResponseEntity<?> saveRoleUser(@RequestBody UserDto user) throws Exception {
+        user.setRole(USER.ROLE_USER.name());
         UserDao userDao =userDetailsService.save(user);
         if (userDao==null)
             return ResponseEntity.status(HttpStatus.CONFLICT).body("email CONFLICT");

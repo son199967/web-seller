@@ -34,13 +34,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (userDao!=null){
             return   null;
         }
-        UserDao newUser = new UserDao();
-        newUser.setEmail(user.getEmail());
-        newUser.setAddress(user.getAddress());
-        newUser.setFistName(user.getFistName());
-        newUser.setIdentification(user.getIdentification());
-        newUser.setLastName(user.getLastName());
-        newUser.setUsername(user.getUsername());
+        UserDao newUser = convertDtoToDao(user);
         newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
         return userRepository.save(newUser);
     }
@@ -57,7 +51,10 @@ public class JwtUserDetailsService implements UserDetailsService {
         newUser.setLastName(userDao.getLastName());
         newUser.setIdentification(userDao.getIdentification());
         newUser.setUsername(userDao.getUsername());
-        newUser.setPassword(userDao.getPassword());
+        newUser.setProvince(userDao.getProvince());
+        newUser.setDistrict(userDao.getDistrict());
+        newUser.setPhone(userDao.getPhone());
+        newUser.setRole(userDao.getRole());
         return newUser;
 
     }
@@ -70,6 +67,10 @@ public class JwtUserDetailsService implements UserDetailsService {
         newUser.setIdentification(userDto.getIdentification());
         newUser.setUsername(userDto.getUsername());
         newUser.setPassword(userDto.getPassword());
+        newUser.setProvince(userDto.getProvince());
+        newUser.setFistName(userDto.getFistName());
+        newUser.setRole(userDto.getRole());
+        newUser.setPhone(userDto.getPhone());
         return newUser;
 
     }

@@ -22,17 +22,57 @@ public class UserDao {
     @Column
     private String address;
     @Column
+    private String province;
+    @Column
+    private String district;
+    @Column
+    private String phone;
+    @Column String role;
+    @Column
     @NonNull
     private String identification;
     @Column
     @JsonIgnore
     private String password;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
     public String getUsername() {
         return username;
     }
 
     public String getAddress() {
         return address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public void setAddress(String address) {
