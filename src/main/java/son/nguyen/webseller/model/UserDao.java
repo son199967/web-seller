@@ -6,7 +6,7 @@ import org.springframework.lang.NonNull;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class UserDao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
