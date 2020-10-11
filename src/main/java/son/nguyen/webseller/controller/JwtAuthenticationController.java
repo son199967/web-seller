@@ -14,7 +14,7 @@ import son.nguyen.webseller.config.sercurity.JwtTokenUtil;
 import son.nguyen.webseller.model.JwtRequest;
 import son.nguyen.webseller.model.JwtResponse;
 import son.nguyen.webseller.dto.UserDto;
-import son.nguyen.webseller.model.UserDao;
+import son.nguyen.webseller.model.User;
 import son.nguyen.webseller.service.JwtUserDetailsService;
 
 @RestController
@@ -56,7 +56,7 @@ public class JwtAuthenticationController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> saveRoleUser(@RequestBody UserDto user) throws Exception {
         user.setRole(USER.ROLE_USER.name());
-        UserDao userDao =userDetailsService.save(user);
+        User userDao =userDetailsService.save(user);
         if (userDao==null)
             return ResponseEntity.status(HttpStatus.CONFLICT).body("email CONFLICT");
         return ResponseEntity.ok(userDao);

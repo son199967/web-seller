@@ -1,13 +1,15 @@
 package son.nguyen.webseller.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name = "users")
-public class UserDao {
+@Table(name = "user")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -34,6 +36,24 @@ public class UserDao {
     @Column
     @JsonIgnore
     private String password;
+    @OneToMany( mappedBy = "user",cascade = CascadeType.ALL)
+    private List<Cart> carts;
+   @JsonManagedReference
+    public List<Cart> getCarts() {
+        return carts;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setCarts(List<Cart> carts) {
+        this.carts = carts;
+    }
 
     public String getRole() {
         return role;

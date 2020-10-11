@@ -28,10 +28,22 @@ public class Products implements Serializable {
     private List<Prices> prices;
     @OneToMany( mappedBy = "products",cascade = CascadeType.ALL)
     private List<Promotions> promotions;
+    @OneToOne (mappedBy = "products",cascade =  CascadeType.ALL)
+    private ProductDetail productDetail;
+    @JsonManagedReference
+    public ProductDetail getProductDetail() {
+        return productDetail;
+    }
+
+    public void setProductDetail(ProductDetail productDetail) {
+        this.productDetail = productDetail;
+    }
+
     @JsonManagedReference
     public List<Promotions> getPromotions() {
         return promotions;
     }
+
 
     public void setPromotions(List<Promotions> promotions) {
         this.promotions = promotions;

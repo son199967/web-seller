@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import son.nguyen.webseller.dto.UserDto;
-import son.nguyen.webseller.model.UserDao;
+import son.nguyen.webseller.model.User;
 import son.nguyen.webseller.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     private PasswordEncoder bcryptEncoder;
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserDao user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
@@ -29,21 +29,25 @@ public class JwtUserDetailsService implements UserDetailsService {
                 new ArrayList<>());
     }
 
-    public UserDao save(UserDto user) {
-        UserDao userDao  = userRepository.findByEmail(user.getEmail());
+    public User save(UserDto user) {
+        User userDao  = userRepository.findByEmail(user.getEmail());
         if (userDao!=null){
             return   null;
         }
-        UserDao newUser = convertDtoToDao(user);
+        User newUser = convertDtoToDao(user);
         newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
         return userRepository.save(newUser);
     }
     public UserDto getUserByEmail(String email) {
-        UserDao userDao  = userRepository.findByEmail(email);
+        User userDao  = userRepository.findByEmail(email);
         UserDto userDto = convertDaoToDto(userDao);
         return userDto;
     }
-    private UserDto convertDaoToDto(UserDao userDao){
+    public User getUseDaorByEmail(String email) {
+        User userDao  = userRepository.findByEmail(email);
+        return userDao;
+    }
+    private UserDto convertDaoToDto(User userDao){
         UserDto newUser=new UserDto();
         newUser.setEmail(userDao.getEmail());
         newUser.setAddress(userDao.getAddress());
@@ -58,8 +62,8 @@ public class JwtUserDetailsService implements UserDetailsService {
         return newUser;
 
     }
-    private UserDao convertDtoToDao(UserDto userDto){
-        UserDao newUser=new UserDao();
+    private User convertDtoToDao(UserDto userDto){
+        User newUser=new User();
         newUser.setEmail(userDto.getEmail());
         newUser.setAddress(userDto.getAddress());
         newUser.setFistName(userDto.getFistName());
