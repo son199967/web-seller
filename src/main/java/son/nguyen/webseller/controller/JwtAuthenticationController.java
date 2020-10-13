@@ -48,10 +48,15 @@ public class JwtAuthenticationController {
     }
     @RequestMapping(value = "/infoUser", method = RequestMethod.GET)
     public ResponseEntity<?> showInfomationUser( @RequestHeader String Authorization) throws Exception {
-       String token =Authorization.substring( 7,Authorization.length());
-        String email = jwtTokenUtil.getUsernameFromToken(token);
+        String email = jwtTokenUtil.getUsernameFromToken(Authorization);
         UserDto userDto =userDetailsService.getUserByEmail(email);
         return ResponseEntity.ok(userDto);
+    }
+    @PutMapping(value = "updateUserInfo")
+    public  ResponseEntity<?> updateUserInfo(@RequestHeader String Authorization,@RequestBody UserDto userDto) {
+        String email = jwtTokenUtil.getUsernameFromToken(Authorization);
+        User userDtoReturn =userDetailsService.updateUserDao(email,userDto);
+        return ResponseEntity.ok(userDtoReturn);
     }
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> saveRoleUser(@RequestBody UserDto user) throws Exception {

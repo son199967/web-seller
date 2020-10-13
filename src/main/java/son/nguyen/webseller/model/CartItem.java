@@ -3,6 +3,7 @@ package son.nguyen.webseller.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name ="cartitem")
@@ -18,12 +19,43 @@ public class CartItem {
     private int size;
     @Column
     private  String color;
+    @Column
+    private  String image;
+    @Column
+    private  String nameProduct;
+    @Column
+    private BigDecimal price;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
     private Cart cart;
     @JsonBackReference
     public Cart getCart() {
         return cart;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getNameProduct() {
+        return nameProduct;
+    }
+
+    public void setNameProduct(String nameProduct) {
+        this.nameProduct = nameProduct;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public void setCart(Cart cart) {

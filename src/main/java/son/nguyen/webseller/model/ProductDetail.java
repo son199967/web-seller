@@ -11,11 +11,16 @@ public class ProductDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     @ElementCollection
     private List<String> images;
     @Column
     private  String content;
+    @ElementCollection
+    private List<String> color;
+    @ElementCollection
+    private List<Integer> size;
+    @Column
+    private String donvi;
     @Column
     private String discription;
     @Column
@@ -23,6 +28,32 @@ public class ProductDetail {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "products")
     private Products products;
+
+    public List<String> getColor() {
+        return color;
+    }
+
+    public List<Integer> getSize() {
+        return size;
+    }
+
+    public void setSize(List<Integer> size) {
+        this.size = size;
+    }
+
+    public String getDonvi() {
+        return donvi;
+    }
+
+    public void setDonvi(String donvi) {
+        this.donvi = donvi;
+    }
+
+    public void setColor(List<String> color) {
+        this.color = color;
+    }
+
+
 
     public long getId() {
         return id;

@@ -11,6 +11,7 @@ import son.nguyen.webseller.model.User;
 import son.nguyen.webseller.service.CartService;
 import son.nguyen.webseller.service.JwtUserDetailsService;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,24 +27,33 @@ public class CartController {
         this.jwtTokenUtil=jwtTokenUtil;
         this.userDetailsService=jwtUserDetailsService;
     }
-    @GetMapping("/getCart")
-    private ResponseEntity<Cart> getCart(@RequestHeader String Authorization){
-        String token =Authorization.substring( 7,Authorization.length());
-        String email = jwtTokenUtil.getUsernameFromToken(token);
+    @GetMapping("/getCartDone")
+    private ResponseEntity<List<Cart>> getCartStatusDone(@RequestHeader String Authorization){
+        String email = jwtTokenUtil.getUsernameFromToken(Authorization);
+        User user =userDetailsService.getUseDaorByEmail(email);
+        if (user==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        List<Cart> cart = cartService.getCartDone(user.getId());
+
+      return ResponseEntity.ok(cart);
+    }
+    @GetMapping("/getCartFuture")
+    private ResponseEntity<Cart> getCartStatusFurure(@RequestHeader String Authorization){
+        String email = jwtTokenUtil.getUsernameFromToken(Authorization);
         User user =userDetailsService.getUseDaorByEmail(email);
         if (user==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
         Optional<Cart> cart = cartService.getCartByUserNotPayment(user.getId());
-       if (!cart.isPresent()){
-          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-       }
-      return ResponseEntity.ok(cart.get());
+        if (!cart.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(cart.get());
     }
     @PostMapping("/createCart")
     private ResponseEntity<Cart> CreatCartAddCartItemToCart(@RequestHeader String Authorization, @RequestBody CartItem cartItem){
-        String token =Authorization.substring( 7,Authorization.length());
-        String email = jwtTokenUtil.getUsernameFromToken(token);
+        String email = jwtTokenUtil.getUsernameFromToken(Authorization);
         User user =userDetailsService.getUseDaorByEmail(email);
         if (user==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);

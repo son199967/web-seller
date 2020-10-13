@@ -47,6 +47,19 @@ public class JwtUserDetailsService implements UserDetailsService {
         User userDao  = userRepository.findByEmail(email);
         return userDao;
     }
+    public User updateUserDao(String email,UserDto userDto) {
+        User userDao  = userRepository.findByEmail(email);
+        userDao.setAddress(userDto.getAddress());
+        userDao.setDistrict(userDto.getDistrict());
+        userDao.setIdentification(userDto.getIdentification());
+        userDao.setFistName(userDto.getFistName());
+        userDao.setLastName(userDto.getLastName());
+        userDao.setPhone(userDto.getPhone());
+        userDao.setProvince(userDto.getProvince());
+        userDao.setUsername(userDto.getUsername());
+        userRepository.save(userDao);
+        return userDao;
+    }
     private UserDto convertDaoToDto(User userDao){
         UserDto newUser=new UserDto();
         newUser.setEmail(userDao.getEmail());
