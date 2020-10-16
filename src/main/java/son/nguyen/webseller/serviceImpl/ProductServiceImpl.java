@@ -6,6 +6,7 @@ import son.nguyen.webseller.model.Products;
 import son.nguyen.webseller.repository.ProductRepository;
 import son.nguyen.webseller.service.ProductService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Service
@@ -41,5 +42,27 @@ public class ProductServiceImpl implements ProductService {
     public Optional<Products> findByNameProduct(String name) {
         Optional<Products> products =productRepository.findByProductName(name);
         return products;
+    }
+
+    @Override
+    public List<Products> searchByContent(String content) {
+        List<Products> productsList =new ArrayList<>();
+        if (content!=null) {
+            productsList = productRepository.searchProduct("%" + content + "%");
+        }else {
+            productsList=productRepository.getAllProduct();
+        }
+        return  productsList;
+    }
+
+    @Override
+    public List<Products> searchByCategory(String category, String brand, int priceFrom, int priceTo) {
+        List<Products> products=new ArrayList<>();
+        if (category!=null&& brand!=null) {
+          products = productRepository.searcgProductBy1(category, brand, priceFrom, priceTo);
+        }else if(category!=null&&brand==null){
+            products = productRepository.searcgProductBy2(category, priceFrom, priceTo);
+        }
+        return  products;
     }
 }

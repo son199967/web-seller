@@ -39,6 +39,22 @@ public class JwtAuthenticationController {
 
         return ResponseEntity.ok(new JwtResponse(token));
     }
+    @RequestMapping(value = "/loginAdmin", method = RequestMethod.POST)
+    public ResponseEntity<?> loginAdmin(@RequestBody JwtRequest authenticationRequest) throws Exception {
+
+        authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+
+        UserDto userDto =userDetailsService.getUserByEmail(authenticationRequest.getEmail());
+        if (!userDto.getRole().equals(USER.ROLE_ADMIN)){
+            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        final String token = jwtTokenUtil.generateToken(userDetails);
+
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
+
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public ResponseEntity<?> logoutUser( @RequestHeader String Authorization) throws Exception {
         String token =Authorization.substring( 7,Authorization.length());
@@ -50,6 +66,15 @@ public class JwtAuthenticationController {
     public ResponseEntity<?> showInfomationUser( @RequestHeader String Authorization) throws Exception {
         String email = jwtTokenUtil.getUsernameFromToken(Authorization);
         UserDto userDto =userDetailsService.getUserByEmail(email);
+        return ResponseEntity.ok(userDto);
+    }
+    @RequestMapping(value = "/checkAdmin", method = RequestMethod.GET)
+    public ResponseEntity<?> checkAdminUser( @RequestHeader String Authorization) throws Exception {
+        String email = jwtTokenUtil.getUsernameFromToken(Authorization);
+        UserDto userDto =userDetailsService.getUserByEmail(email);
+        if (!userDto.getRole().equals("ROLE_ADMIN")){
+            return ResponseEntity.ok("not admin");
+        }
         return ResponseEntity.ok(userDto);
     }
     @PutMapping(value = "updateUserInfo")

@@ -1,6 +1,5 @@
 package son.nguyen.webseller.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -32,7 +31,7 @@ public class Products implements Serializable {
     @OneToOne (mappedBy = "products",cascade =  CascadeType.ALL)
     private ProductDetail productDetail;
 
-    @JsonBackReference
+    @JsonManagedReference
     public ProductDetail getProductDetail() {
         return productDetail;
     }

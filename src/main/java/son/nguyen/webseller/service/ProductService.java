@@ -10,5 +10,9 @@ public interface ProductService {
     Products saveProduct(Products products);
     Optional<Products> findById(Long id);
     Optional<Products> findByNameProduct(String name);
+    List<Products> searchByContent(String content);
+    List<Products> searchByCategory(String category,String brand,int priceFrom,int priceTo);
+
+
 
 }

@@ -41,6 +41,7 @@ public class CartServiceImpl   implements CartService {
         items.setCart(cart);
         Products products = productRepository.findById(items.getProductId()).get();
         items.setPrice(products.getPrices().get(0).getUnitPrice());
+        items.setTotalPriceItem(items.getPrice().multiply(new BigDecimal(items.getAmount())));
         items.setNameProduct(products.getProductName());
         items.setImage(products.getImageProduct());
         List<CartItem> cartItems1= cart.getCartItems();
@@ -62,9 +63,10 @@ public class CartServiceImpl   implements CartService {
           cartItemRepository.deleteByIdSQl(cartItems1.get(vitri).getId());
           cartItems1.remove(cartItems1.get(vitri));
       }
-         cartItems1.add(items);
+        cartItems1.add(items);
         cart.setCartItems(cartItems1);
         cart.setTotalPrice(totalMoneyCount(cart));
+
         cartRepository.save(cart);
         return cart;
     }
@@ -72,9 +74,8 @@ public class CartServiceImpl   implements CartService {
            List<CartItem> cartItem= cart.getCartItems();
            BigDecimal total= new BigDecimal(0);
            for (CartItem c:cartItem){
-               BigDecimal decimal=c.getPrice().multiply(new BigDecimal(c.getAmount()));
 
-               total=total.add(decimal);
+               total=total.add(c.getTotalPriceItem());
            }
            return total;
     }

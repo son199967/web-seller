@@ -40,6 +40,7 @@ public class CartController {
     }
     @GetMapping("/getCartFuture")
     private ResponseEntity<Cart> getCartStatusFurure(@RequestHeader String Authorization){
+        if(Authorization==null) return null;
         String email = jwtTokenUtil.getUsernameFromToken(Authorization);
         User user =userDetailsService.getUseDaorByEmail(email);
         if (user==null){

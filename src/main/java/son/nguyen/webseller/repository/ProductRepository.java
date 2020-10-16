@@ -13,4 +13,10 @@ public interface ProductRepository extends JpaRepository<Products,Long> {
 
   @Query("select a from Products a")
   List<Products> getAllProduct();
+  @Query("select a from Products  a where a.productName like ?1")
+  List<Products> searchProduct(String content);
+  @Query("select a from Products a where  a.productType=?1 and a.providerName=?2")
+  List<Products> searcgProductBy1(String category,String brand,int priceFrom,int priceTo);
+  @Query("select a from Products a where  a.productType=?1")
+  List<Products> searcgProductBy2(String category,int priceFrom,int priceTo);
 }

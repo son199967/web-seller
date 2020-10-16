@@ -29,6 +29,7 @@ public class JwtUserDetailsService implements UserDetailsService {
                 new ArrayList<>());
     }
 
+
     public User save(UserDto user) {
         User userDao  = userRepository.findByEmail(user.getEmail());
         if (userDao!=null){

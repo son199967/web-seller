@@ -25,6 +25,16 @@ public class CartItem {
     private  String nameProduct;
     @Column
     private BigDecimal price;
+    @Column
+    private BigDecimal totalPriceItem;
+
+    public BigDecimal getTotalPriceItem() {
+        return totalPriceItem;
+    }
+
+    public void setTotalPriceItem(BigDecimal totalPriceItem) {
+        this.totalPriceItem = totalPriceItem;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")

@@ -39,4 +39,19 @@ public class ProductController {
 
          return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
+    @GetMapping("search")
+    private ResponseEntity<List<Products>> searchProductNotExact(@RequestParam String contentSerch){
+          List<Products> list = productService.searchByContent(contentSerch);
+          return ResponseEntity.ok(list);
+    }
+    @GetMapping("searchBy")
+    private ResponseEntity<List<Products>> searchProductNotExact(@RequestParam String category,
+                                                                 @RequestParam String brand,
+                                                                 @RequestParam int priceFrom,
+                                                                 @RequestParam int priceTo
+
+    ){
+        List<Products> list = productService.searchByCategory(category,brand,priceFrom,priceTo);
+        return ResponseEntity.ok(list);
+    }
 }
