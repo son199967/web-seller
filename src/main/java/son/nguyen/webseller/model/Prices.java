@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Table(name="prices")
@@ -16,13 +15,39 @@ public class Prices implements Serializable {
     @Column
     private BigDecimal unitPrice;
     @Column
-    private Date dateStart;
+    private BigDecimal wholePrice;
     @Column
-    private Date dateEnd;
-    @ManyToOne(fetch = FetchType.LAZY)
+    private BigDecimal importPrice;
+    @Column
+    private BigDecimal oldPrice;
+
+    public BigDecimal getOldPrice() {
+        return oldPrice;
+    }
+
+    public void setOldPrice(BigDecimal oldPrice) {
+        this.oldPrice = oldPrice;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "products_id")
     private Products products;
 
+    public BigDecimal getWholePrice() {
+        return wholePrice;
+    }
+
+    public void setWholePrice(BigDecimal wholePrice) {
+        this.wholePrice = wholePrice;
+    }
+
+    public BigDecimal getImportPrice() {
+        return importPrice;
+    }
+
+    public void setImportPrice(BigDecimal importPrice) {
+        this.importPrice = importPrice;
+    }
 
     public long getId() {
         return id;
@@ -40,21 +65,7 @@ public class Prices implements Serializable {
         this.unitPrice = unitPrice;
     }
 
-    public Date getDateStart() {
-        return dateStart;
-    }
 
-    public void setDateStart(Date dateStart) {
-        this.dateStart = dateStart;
-    }
-
-    public Date getDateEnd() {
-        return dateEnd;
-    }
-
-    public void setDateEnd(Date dateEnd) {
-        this.dateEnd = dateEnd;
-    }
     @JsonBackReference
     public Products getProducts() {
         return products;
@@ -69,8 +80,8 @@ public class Prices implements Serializable {
         return "Prices{" +
                 "id=" + id +
                 ", unitPrice=" + unitPrice +
-                ", dateStart=" + dateStart +
-                ", dateEnd=" + dateEnd +
+                ", wholePrice=" + wholePrice +
+                ", importPrice=" + importPrice +
                 ", products=" + products +
                 '}';
     }

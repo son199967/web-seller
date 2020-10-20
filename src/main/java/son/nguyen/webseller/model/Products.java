@@ -20,16 +20,46 @@ public class Products implements Serializable {
     @Column
     private String productType;
     @Column
+    private String code;
+    @Column
+    private Long barcode;
+
+    @Column
     private String imageProduct;
     @Column
     private String providerName;
+    @Column String href;
 
-    @OneToMany( mappedBy = "products",cascade = CascadeType.ALL)
-    private List<Prices> prices;
+    @OneToOne( mappedBy = "products",cascade = CascadeType.ALL)
+    private Prices prices;
     @OneToMany( mappedBy = "products",cascade = CascadeType.ALL)
     private List<Promotions> promotions;
     @OneToOne (mappedBy = "products",cascade =  CascadeType.ALL)
     private ProductDetail productDetail;
+
+    public Long getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(Long barcode) {
+        this.barcode = barcode;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getHref() {
+        return href;
+    }
+
+    public void setHref(String href) {
+        this.href = href;
+    }
 
     @JsonManagedReference
     public ProductDetail getProductDetail() {
@@ -91,11 +121,11 @@ public class Products implements Serializable {
         this.providerName = providerName;
     }
     @JsonManagedReference
-    public List<Prices> getPrices() {
+    public Prices getPrices() {
         return prices;
     }
 
-    public void setPrices(List<Prices> prices) {
+    public void setPrices(Prices prices) {
         this.prices = prices;
     }
 

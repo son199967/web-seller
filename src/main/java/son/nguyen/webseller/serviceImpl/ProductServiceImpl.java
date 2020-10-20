@@ -3,66 +3,103 @@ package son.nguyen.webseller.serviceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import son.nguyen.webseller.model.Products;
+import son.nguyen.webseller.repository.ProductDetailRepository;
 import son.nguyen.webseller.repository.ProductRepository;
 import son.nguyen.webseller.service.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
+    private ProductDetailRepository productDetailRepository;
 
 
     @Autowired
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, ProductDetailRepository productDetailRepository) {
         this.productRepository = productRepository;
+        this.productDetailRepository = productDetailRepository;
     }
 
     @Override
     public List<Products> getAllProduct() {
-       List<Products> products = productRepository.getAllProduct();
+        List<Products> products = productRepository.getAllProduct();
         System.out.println("sjhdsjd");
-      return products;
+        return products;
     }
 
     @Override
     public Products saveProduct(Products products) {
-        Products productSave=productRepository.save(products);
+        Products productSave = productRepository.save(products);
         return productSave;
     }
 
     @Override
     public Optional<Products> findById(Long id) {
-        Optional<Products> products =productRepository.findById(id);
+        Optional<Products> products = productRepository.findById(id);
         return products;
     }
 
     @Override
     public Optional<Products> findByNameProduct(String name) {
-        Optional<Products> products =productRepository.findByProductName(name);
+        Optional<Products> products = productRepository.findByProductName(name);
         return products;
     }
 
     @Override
     public List<Products> searchByContent(String content) {
-        List<Products> productsList =new ArrayList<>();
-        if (content!=null) {
+        List<Products> productsList = new ArrayList<>();
+        if (content != null) {
             productsList = productRepository.searchProduct("%" + content + "%");
-        }else {
-            productsList=productRepository.getAllProduct();
+        } else {
+            productsList = productRepository.getAllProduct();
         }
-        return  productsList;
+        return productsList;
     }
 
     @Override
     public List<Products> searchByCategory(String category, String brand, int priceFrom, int priceTo) {
-        List<Products> products=new ArrayList<>();
-        if (category!=null&& brand!=null) {
-          products = productRepository.searcgProductBy1(category, brand, priceFrom, priceTo);
-        }else if(category!=null&&brand==null){
+        List<Products> products = new ArrayList<>();
+        if (category != null && brand != null) {
+            products = productRepository.searcgProductBy1(category, brand, priceFrom, priceTo);
+        } else if (category != null && brand == null) {
             products = productRepository.searcgProductBy2(category, priceFrom, priceTo);
         }
-        return  products;
+        return products;
+    }
+
+    @Override
+    public List<String> getAllTypeProduct() {
+        List<String> stringList = new ArrayList<>();
+        stringList = productRepository.getAllTypeProduct().stream().distinct().collect(Collectors.toList());
+        return stringList;
+    }
+
+    @Override
+    public void deleteProductByid(Long id) {
+        Optional<Products> products = productRepository.findById(id);
+        if (!products.isPresent()) return;
+//        productDetailRepository.deleteById(products.get().getProductDetail().getId());
+        productRepository.deleteById(id);
+        return;
+    }
+
+    @Override
+    public Products update(Products products) {
+        Products products1 = productRepository.findById(products.getId()).get();
+        products.setId(products1.getId());
+         productRepository.save(products);
+        return products1;
+    }
+
+    @Override
+    public Products getProductHref(String url) {
+        Optional<Products> products= productRepository.getByhref(url);
+        if (products.isPresent())
+            return products.get();
+        return null;
     }
 }

@@ -40,7 +40,7 @@ public class CartServiceImpl   implements CartService {
     public Cart addCartItemToCart(Cart cart,CartItem items) {
         items.setCart(cart);
         Products products = productRepository.findById(items.getProductId()).get();
-        items.setPrice(products.getPrices().get(0).getUnitPrice());
+        items.setPrice(products.getPrices().getUnitPrice());
         items.setTotalPriceItem(items.getPrice().multiply(new BigDecimal(items.getAmount())));
         items.setNameProduct(products.getProductName());
         items.setImage(products.getImageProduct());

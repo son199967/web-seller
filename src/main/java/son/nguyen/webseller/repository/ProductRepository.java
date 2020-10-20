@@ -19,4 +19,8 @@ public interface ProductRepository extends JpaRepository<Products,Long> {
   List<Products> searcgProductBy1(String category,String brand,int priceFrom,int priceTo);
   @Query("select a from Products a where  a.productType=?1")
   List<Products> searcgProductBy2(String category,int priceFrom,int priceTo);
+  @Query("select a.productType from Products a")
+  List<String> getAllTypeProduct();
+  @Query("select a from Products  a where a.href = ?1")
+  Optional<Products> getByhref(String url);
 }
