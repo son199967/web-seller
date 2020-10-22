@@ -1,5 +1,7 @@
 package son.nguyen.webseller.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -12,7 +14,9 @@ public interface ProductRepository extends JpaRepository<Products,Long> {
   Optional<Products> findByProductName(String name);
 
   @Query("select a from Products a")
-  List<Products> getAllProduct();
+  Page<Products> getAllProduct(Pageable pageable);
+  @Query("select a.providerName from Products a where a.productType=?1")
+  List<String> getAllBranch(String cate);
   @Query("select a from Products  a where a.productName like ?1")
   List<Products> searchProduct(String content);
   @Query("select a from Products a where  a.productType=?1 and a.providerName=?2")
@@ -23,4 +27,8 @@ public interface ProductRepository extends JpaRepository<Products,Long> {
   List<String> getAllTypeProduct();
   @Query("select a from Products  a where a.href = ?1")
   Optional<Products> getByhref(String url);
+  @Query("select a from Products a where a.productType=?1")
+  Page<Products> getProductCate(String cate,Pageable pageable);
+  @Query("select a from Products a where a.productType=?2 and a.providerName=?1")
+  Page<Products> getProductCateProvide(String provide,String cate,Pageable pageable);
 }

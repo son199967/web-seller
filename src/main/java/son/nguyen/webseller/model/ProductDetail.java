@@ -21,8 +21,9 @@ public class ProductDetail {
     private List<Integer> size;
     @Column
     private String donvi;
-    @Column
-    private String discription;
+
+    @ElementCollection
+    private List<String> discription;
     @Column
     private int star;
     @OneToOne(fetch = FetchType.LAZY)
@@ -35,6 +36,10 @@ public class ProductDetail {
 
     public List<Integer> getSize() {
         return size;
+    }
+
+    public List<String> getDiscription() {
+        return discription;
     }
 
     public void setSize(List<Integer> size) {
@@ -53,7 +58,9 @@ public class ProductDetail {
         this.color = color;
     }
 
-
+    public void setDiscription(List<String> discription) {
+        this.discription = discription;
+    }
 
     public long getId() {
         return id;
@@ -79,13 +86,6 @@ public class ProductDetail {
         this.content = content;
     }
 
-    public String getDiscription() {
-        return discription;
-    }
-
-    public void setDiscription(String discription) {
-        this.discription = discription;
-    }
 
     public int getStar() {
         return star;

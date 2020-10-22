@@ -43,7 +43,8 @@ public class CrawController {
 
 
     @GetMapping("/crawler")
-    private ResponseEntity<?> crawByUrl() throws IOException {
+    private ResponseEntity<?> crawByUrl( @RequestParam String urlStart,@RequestParam String type,@RequestParam String provied) throws IOException {
+        Integer m=0;
         String urlPage ="https://www.anphatpc.com.vn";
         WebClient  webClient = new WebClient(BrowserVersion.CHROME);
         webClient.getOptions().setCssEnabled(false);
@@ -51,19 +52,26 @@ public class CrawController {
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
         webClient.getOptions().setPrintContentOnFailingStatusCode(false);
-        HtmlPage myPage = webClient.getPage("https://www.anphatpc.com.vn/Laptop-msi_dm1065.html");
+        HtmlPage myPage = webClient.getPage(urlStart);
         Document doc = Jsoup.parse(myPage.asXml());
         Elements elements = doc.select("div.p-item-2019");
 
         for (Element a:elements){
             String url = urlPage +  a.select("div.p-container-2019>a").first().attr("href");
             Products products =  productService.getProductHref(url);
-
+            if (products!=null){
+                continue;
+            }
             String imgProduct = a.select("a.p-img-2019>img").first().attr("src");
             String nameProduct=a.select("a.p-name-2019").first().text();
             String code=a.select("span.p-sku").first().text().replace("Mã SP : ","");
-            Long priceNews = Long.parseLong(a.select("span.p-price-2019").first().text().
+            Long priceNews=0L;
+            try {
+             priceNews = Long.parseLong(a.select("span.p-price-2019").first().text().
                     replaceAll("\\D+",""));
+            }catch (Exception e){
+                System.out.println( "not path");
+            }
             Long priceOld=0L;
             try {
                 priceOld = Long.parseLong(a.select("span.p-old-price-2019").first().text().
@@ -76,38 +84,31 @@ public class CrawController {
             List<String> contentDetail = docDetail.select("div#detail_summary").first().select("span").stream().map(element -> element.text()).collect(Collectors.toList());
             List<String> imagesDetail = docDetail.select("li.image-title-item").stream().map(element -> element.attr("data-img")).collect(Collectors.toList());
             StringBuffer productInfo=new StringBuffer();
-            for (String b:contentDetail){
-                productInfo.append(b);
-            }
-            StringBuffer discription=new StringBuffer();
-            Elements discriptionE = docDetail.select("div#product-description>p");
-            for (Element e:discriptionE){
-                if (e.select("img").size()!=0) {
-                    discription.append(e.text()).append(e.select("img").first().toString()).append("\n");
-                }else {
-                    discription.append(e.text()).append("\n");
-                }
-            }
+
+
+            List<String> discriptionE = docDetail.select("div#product-description>p").stream().map(element -> element.text()).collect(Collectors.toList());
+
             System.out.println("xx");
             Products products1 =new Products();
 
             ProductDetail productDetail=new ProductDetail();
-            products1.setProductInfo(productInfo.toString());
+            products1.setProductInfo(contentDetail);
             products1.setProductName(nameProduct);
             products1.setCode(code);
             products1.setImageProduct(imgProduct);
             products1.setHref(url);
-            products1.setProductType("Laptop");
-            productDetail.setDiscription(discription.toString());
+            products1.setProductType(type);
+            products1.setProviderName(provied);
+            productDetail.setDiscription(discriptionE);
             productDetail.setImages(imagesDetail);
             productDetail.setDonvi("'");
+
             productDetail.setColor(new ArrayList<>(Arrays.asList("red","blue","while","black")));
             productDetail.setSize(new ArrayList<>(Arrays.asList(14,15,20)));
 
             Prices prices =new Prices();
             prices.setUnitPrice(new BigDecimal(priceNews));
             prices.setOldPrice(new BigDecimal(priceOld));
-
 
             if (products!=null) {
                 products1.setId(products.getId());
@@ -121,8 +122,10 @@ public class CrawController {
             products1.setProductDetail(productDetail);
             products1.setPrices(prices);
             productService.saveProduct(products1);
+            m++;
+            if (m>20) return ResponseEntity.ok("oke");
         }
-        return ResponseEntity.ok("jshdjsd");
+        return ResponseEntity.ok("oke");
     }
 
 
@@ -157,5 +160,7 @@ public class CrawController {
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
 
     }
+
+
 
 }

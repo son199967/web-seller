@@ -63,7 +63,7 @@ public class JwtAuthenticationController {
         return ResponseEntity.ok(new JwtResponse(token));
     }
     @RequestMapping(value = "/infoUser", method = RequestMethod.GET)
-    public ResponseEntity<?> showInfomationUser( @RequestHeader String Authorization) throws Exception {
+    public ResponseEntity<?> showInfomationUser(@RequestHeader String Authorization) throws Exception {
         String email = jwtTokenUtil.getUsernameFromToken(Authorization);
         UserDto userDto =userDetailsService.getUserByEmail(email);
         return ResponseEntity.ok(userDto);

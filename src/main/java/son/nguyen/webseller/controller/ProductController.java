@@ -1,6 +1,9 @@
 package son.nguyen.webseller.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +34,21 @@ public class ProductController {
 
 
     @GetMapping("/getAllProduct")
-    private ResponseEntity<List<Products>> getAllProduct(){
-        List<Products> products= productService.getAllProduct();
+    private ResponseEntity<Page<Products>> getAllProduct(@RequestParam int size,@RequestParam int page){
+        Pageable pageable=PageRequest.of(page,size);
+        Page<Products> products= productService.getAllProduct(pageable);
         return ResponseEntity.ok(products);
+    }
+    @GetMapping("/getProductCate")
+    private ResponseEntity<Page<Products>> getProductCate(@RequestParam String cate,@RequestParam(required = false) String provider,@RequestParam int size,@RequestParam int page){
+        Pageable pageable=PageRequest.of(page,size);
+        Page<Products> products= productService.getProductCate(provider,cate,pageable);
+        return ResponseEntity.ok(products);
+    }
+    @GetMapping("/getAllBranch")
+    private ResponseEntity<List<String>> getAllBranch(@RequestParam String cate){
+        List<String> resulf= productService.getAllBranch(cate);
+        return ResponseEntity.ok(resulf);
     }
 
     @GetMapping("/getProductById/{id}")

@@ -14,8 +14,8 @@ public class Products implements Serializable {
     private long id;
     @Column
     private String productName;
-    @Column
-    private String productInfo;
+    @ElementCollection
+    private List<String> productInfo;
 
     @Column
     private String productType;
@@ -23,6 +23,8 @@ public class Products implements Serializable {
     private String code;
     @Column
     private Long barcode;
+    @Column
+    private String tags;
 
     @Column
     private String imageProduct;
@@ -97,11 +99,19 @@ public class Products implements Serializable {
         this.productName = productName;
     }
 
-    public String getProductInfo() {
+    public List<String> getProductInfo() {
         return productInfo;
     }
 
-    public void setProductInfo(String productInfo) {
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public void setProductInfo(List<String> productInfo) {
         this.productInfo = productInfo;
     }
 

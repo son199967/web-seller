@@ -1,12 +1,15 @@
 package son.nguyen.webseller.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import son.nguyen.webseller.model.Products;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
-    List<Products> getAllProduct();
+    Page<Products> getAllProduct(Pageable pageable);
+    Page<Products> getProductCate(String provi,String cate,Pageable pageable);
     Products saveProduct(Products products);
     Products update(Products products);
     Optional<Products> findById(Long id);
@@ -16,6 +19,8 @@ public interface ProductService {
     List<String> getAllTypeProduct();
     Products getProductHref(String url);
     void deleteProductByid(Long id);
+    List<String> getAllBranch(String cate);
+
 
 
 

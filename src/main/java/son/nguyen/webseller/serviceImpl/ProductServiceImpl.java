@@ -1,11 +1,15 @@
 package son.nguyen.webseller.serviceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import son.nguyen.webseller.model.Products;
 import son.nguyen.webseller.repository.ProductDetailRepository;
 import son.nguyen.webseller.repository.ProductRepository;
 import son.nguyen.webseller.service.ProductService;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +29,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Products> getAllProduct() {
-        List<Products> products = productRepository.getAllProduct();
+    public Page<Products> getAllProduct(Pageable pageable) {
+        Page<Products> products = productRepository.getAllProduct(pageable);
         System.out.println("sjhdsjd");
         return products;
     }
@@ -52,11 +56,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Products> searchByContent(String content) {
         List<Products> productsList = new ArrayList<>();
+        Pageable pageable=PageRequest.of(1,20);
         if (content != null) {
             productsList = productRepository.searchProduct("%" + content + "%");
-        } else {
-            productsList = productRepository.getAllProduct();
         }
+//        else {
+//            productsList = productRepository.getAllProduct(pageable);
+//        }
         return productsList;
     }
 
@@ -101,5 +107,22 @@ public class ProductServiceImpl implements ProductService {
         if (products.isPresent())
             return products.get();
         return null;
+    }
+
+    @Override
+    public Page<Products> getProductCate(String provide,String cate, Pageable pageable) {
+        Page<Products> products=null;
+        if (provide=="") {
+            products = productRepository.getProductCate(cate, pageable);
+        }else {
+            products = productRepository.getProductCateProvide(provide, cate, pageable);
+        }
+        return products;
+    }
+    @Override
+    public List<String> getAllBranch(String cate) {
+        List<String> products=productRepository.getAllBranch( cate).stream().distinct().collect(Collectors.toList());
+
+        return products;
     }
 }
