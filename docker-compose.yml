@@ -2,6 +2,8 @@ version: '3'
 services:
   mysql-standalone:
     image: 'mysql/mysql-server:5.7.25'
+    volumes:
+      - mysql_data:/var/lib/mysql
     environment:
         - MYSQL_ROOT_PASSWORD=root@1234
         - MYSQL_DATABASE=demo
@@ -14,7 +16,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/demo?autoReconnect=true&useSSL=false
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/demo?useUnicode=yes&characterEncoding=UTF-8
       SPRING_DATASOURCE_USERNAME: "sonnguyen"
       SPRING_DATASOURCE_PASSWORD: "sonnguyen99"
     build:
@@ -22,3 +24,17 @@ services:
       dockerfile: "Dockerfile"
     depends_on:
       - mysql-standalone
+  react-ui:
+    build:
+      context: "/Users/sonnguyen/Desktop/code/web-seller/."
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    container_name: react-ui
+    stdin_open: true
+    volumes:
+      - "/app/node_modules"
+      - "./:/app"
+
+volumes:
+  mysql_data:

@@ -25,7 +25,8 @@ public class Products implements Serializable {
     private Long barcode;
     @Column
     private String tags;
-
+     @Column
+     private int status;
     @Column
     private String imageProduct;
     @Column
@@ -41,6 +42,14 @@ public class Products implements Serializable {
 
     public Long getBarcode() {
         return barcode;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public void setBarcode(Long barcode) {
@@ -101,6 +110,13 @@ public class Products implements Serializable {
 
     public List<String> getProductInfo() {
         return productInfo;
+    }
+    public String getInfo(){
+        StringBuffer stringBuffer=new StringBuffer();
+        for (String a:this.getProductInfo()){
+            stringBuffer.append(a).append(" ");
+        }
+        return stringBuffer.toString();
     }
 
     public String getTags() {

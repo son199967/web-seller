@@ -21,10 +21,7 @@ import son.nguyen.webseller.service.ProductService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -43,7 +40,7 @@ public class CrawController {
 
 
     @GetMapping("/crawler")
-    private ResponseEntity<?> crawByUrl( @RequestParam String urlStart,@RequestParam String type,@RequestParam String provied) throws IOException {
+    private ResponseEntity<?> crawByUrl( @RequestParam String urlStart,@RequestParam String tag,@RequestParam String type,@RequestParam String provied) throws IOException {
         Integer m=0;
         String urlPage ="https://www.anphatpc.com.vn";
         WebClient  webClient = new WebClient(BrowserVersion.CHROME);
@@ -56,15 +53,22 @@ public class CrawController {
         Document doc = Jsoup.parse(myPage.asXml());
         Elements elements = doc.select("div.p-item-2019");
 
+
         for (Element a:elements){
             String url = urlPage +  a.select("div.p-container-2019>a").first().attr("href");
             Products products =  productService.getProductHref(url);
             if (products!=null){
                 continue;
             }
+
             String imgProduct = a.select("a.p-img-2019>img").first().attr("src");
             String nameProduct=a.select("a.p-name-2019").first().text();
-            String code=a.select("span.p-sku").first().text().replace("Mã SP : ","");
+            String code="";
+            try {
+                 code = a.select("span.p-sku").first().text().replace("Mã SP : ", "");
+            }catch (Exception e){
+                System.out.println( "not path");
+            }
             Long priceNews=0L;
             try {
              priceNews = Long.parseLong(a.select("span.p-price-2019").first().text().
@@ -86,7 +90,13 @@ public class CrawController {
             StringBuffer productInfo=new StringBuffer();
 
 
-            List<String> discriptionE = docDetail.select("div#product-description>p").stream().map(element -> element.text()).collect(Collectors.toList());
+            List<String> discriptionE = docDetail.select("div#product-description>p").stream().map(element ->
+            {
+                if (element.select("img").size()==0){
+                    return element.text();
+                }
+               return element.select("img").first().attr("src");
+            }).collect(Collectors.toList());
 
             System.out.println("xx");
             Products products1 =new Products();
@@ -97,19 +107,18 @@ public class CrawController {
             products1.setCode(code);
             products1.setImageProduct(imgProduct);
             products1.setHref(url);
+            products1.setTags(tag);
             products1.setProductType(type);
             products1.setProviderName(provied);
             productDetail.setDiscription(discriptionE);
             productDetail.setImages(imagesDetail);
             productDetail.setDonvi("'");
-
             productDetail.setColor(new ArrayList<>(Arrays.asList("red","blue","while","black")));
             productDetail.setSize(new ArrayList<>(Arrays.asList(14,15,20)));
-
             Prices prices =new Prices();
             prices.setUnitPrice(new BigDecimal(priceNews));
             prices.setOldPrice(new BigDecimal(priceOld));
-
+            prices.setDiscout();
             if (products!=null) {
                 products1.setId(products.getId());
                 productDetail.setId(products.getProductDetail().getId());

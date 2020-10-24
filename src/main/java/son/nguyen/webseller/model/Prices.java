@@ -21,6 +21,21 @@ public class Prices implements Serializable {
     @Column
     private BigDecimal oldPrice;
 
+    @Column
+    private int discout;
+
+    public int getDiscout() {
+        return discout;
+    }
+
+    public void setDiscout() {
+      if (this.unitPrice.intValue()==0||this.oldPrice.intValue()==0){
+          this.discout=0;
+          return;
+      }
+      this.discout=(int)(((this.oldPrice.doubleValue()-this.unitPrice.doubleValue())/(this.getOldPrice().doubleValue()))*100);
+    }
+
     public BigDecimal getOldPrice() {
         return oldPrice;
     }

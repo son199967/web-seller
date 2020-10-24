@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
-    Page<Products> getAllProduct(Pageable pageable);
-    Page<Products> getProductCate(String provi,String cate,Pageable pageable);
+    Page<Products> getAllProduct(Integer status,Pageable pageable);
+    Page<Products> getProductCate(String provi,String productType,String tag,Pageable pageable);
     Products saveProduct(Products products);
     Products update(Products products);
     Optional<Products> findById(Long id);
@@ -19,7 +19,8 @@ public interface ProductService {
     List<String> getAllTypeProduct();
     Products getProductHref(String url);
     void deleteProductByid(Long id);
-    List<String> getAllBranch(String cate);
+   List <String> getAllBranch(String tag,String provider,String productType);
+   Products updateProductStatus(Long id,int status);
 
 
 

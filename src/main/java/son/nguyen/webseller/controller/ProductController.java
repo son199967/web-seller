@@ -1,5 +1,7 @@
 package son.nguyen.webseller.controller;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,10 +15,14 @@ import son.nguyen.webseller.model.Products;
 import son.nguyen.webseller.service.JwtUserDetailsService;
 import son.nguyen.webseller.service.ProductService;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/product")
@@ -33,23 +39,58 @@ public class ProductController {
     }
 
 
-    @GetMapping("/getAllProduct")
-    private ResponseEntity<Page<Products>> getAllProduct(@RequestParam int size,@RequestParam int page){
+    @GetMapping("/getProductStatus")
+    private ResponseEntity<Page<Products>> getAllProduct(@RequestParam int size,@RequestParam int page,@RequestParam(required = false) Integer status){
         Pageable pageable=PageRequest.of(page,size);
-        Page<Products> products= productService.getAllProduct(pageable);
+
+            Page<Products> products = productService.getAllProduct(status, pageable);
+
         return ResponseEntity.ok(products);
     }
-    @GetMapping("/getProductCate")
-    private ResponseEntity<Page<Products>> getProductCate(@RequestParam String cate,@RequestParam(required = false) String provider,@RequestParam int size,@RequestParam int page){
+    @GetMapping("/getProductStatusK")
+    private ResponseEntity<Page<Products>> getAllProductK(@RequestParam int size,@RequestParam int page,@RequestParam(required = false) Integer status){
         Pageable pageable=PageRequest.of(page,size);
-        Page<Products> products= productService.getProductCate(provider,cate,pageable);
+
+        Page<Products> products = productService.getAllProduct(status, pageable);
+        String csvFile = "data.csv";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile));
+             CSVPrinter csvPrinter = new CSVPrinter(writer,
+                     CSVFormat.DEFAULT.withHeader("id", "name", "discription"));) {
+          List<Products> a= products.get().collect(Collectors.toList());
+            for (Products a1:a){
+                csvPrinter.printRecord(a1.getId(),a1.getProductName(),a1.getInfo());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return ResponseEntity.ok(products);
     }
+    @GetMapping("/getProductTag")
+    private ResponseEntity<Page<Products>> getProductCate(@RequestParam(required = false) String productType,
+                                                          @RequestParam(required = false) String provider,
+                                                          @RequestParam int size,
+                                                          @RequestParam int page,
+                                                          @RequestParam(required = false) String tag){
+        Pageable pageable=PageRequest.of(page,size);
+        Page<Products> products= productService.getProductCate(provider,productType,tag,pageable);
+        return ResponseEntity.ok(products);
+    }
+
     @GetMapping("/getAllBranch")
-    private ResponseEntity<List<String>> getAllBranch(@RequestParam String cate){
-        List<String> resulf= productService.getAllBranch(cate);
+    private ResponseEntity<List<String>> getAllBranch(@RequestParam(required = false) String provider
+            ,@RequestParam String type
+            ,@RequestParam(required = false) String tag
+    ){
+      List<String> resulf= productService.getAllBranch(tag,provider,type);
         return ResponseEntity.ok(resulf);
     }
+    @PutMapping("/updateStatusProduct")
+    private ResponseEntity<Products> updateStatus(@RequestParam Long id,@RequestParam int status
+    ){
+        Products resulf= productService.updateProductStatus(id,status);
+        return ResponseEntity.ok(resulf);
+    }
+
 
     @GetMapping("/getProductById/{id}")
     private ResponseEntity<Products> getProductById(@PathVariable("id") Long id){

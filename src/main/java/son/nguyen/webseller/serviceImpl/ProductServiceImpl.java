@@ -29,9 +29,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Products> getAllProduct(Pageable pageable) {
-        Page<Products> products = productRepository.getAllProduct(pageable);
-        System.out.println("sjhdsjd");
+    public Page<Products> getAllProduct(Integer status,Pageable pageable) {
+        Page<Products> products=null;
+        if (status!=null) {
+             products = productRepository.getAllProductStatus(status, pageable);
+        }else {
+            products = productRepository.getAllProduct( pageable);
+        }
+
         return products;
     }
 
@@ -110,19 +115,44 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Products> getProductCate(String provide,String cate, Pageable pageable) {
+    public Page<Products> getProductCate(String provide,String productType,String tag, Pageable pageable) {
         Page<Products> products=null;
-        if (provide=="") {
-            products = productRepository.getProductCate(cate, pageable);
-        }else {
-            products = productRepository.getProductCateProvide(provide, cate, pageable);
-        }
+//        if (provide==""&&productType==""){
+//           products= productRepository.getProductByTag(tag,pageable);
+//        }else if (provide==""&&productType!=""){
+//            products =  productRepository.getProductTagProvidType(productType,tag,pageable);
+//        }else if (provide!=""&&productType==""){
+//            products = productRepository.getProductTagProvide(provide,tag,pageable);
+//        }else {
+//            products = productRepository.getProductTagProvidType(productType,tag,provide,pageable);
+//        }
+        products = productRepository.getProductProvidType(productType,provide,pageable);
+
+
         return products;
     }
     @Override
-    public List<String> getAllBranch(String cate) {
-        List<String> products=productRepository.getAllBranch( cate).stream().distinct().collect(Collectors.toList());
+    public List<String> getAllBranch(String tag, String provider,String productType ) {
+        List<String> products=null;
+        if (tag=="") {
+            products = productRepository.getAllBranch(productType, provider).stream().distinct().collect(Collectors.toList());
+        }else if (provider==null){
+            products = productRepository.getAllBranchTag(productType, tag).stream().distinct().collect(Collectors.toList());
+        }else {
+            products = productRepository.getAllTypeProvide(productType, provider).stream().distinct().collect(Collectors.toList());
+        }
 
         return products;
+    }
+
+    @Override
+    public Products updateProductStatus(Long id,int status) {
+       Optional<Products> products = productRepository.getById(id);
+       if (!products.isPresent()){
+           return null;
+       }
+       products.get().setStatus(status);
+       productRepository.save(products.get());
+       return products.get();
     }
 }
