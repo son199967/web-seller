@@ -1,5 +1,6 @@
 package son.nguyen.webseller.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,14 @@ public class ProductController {
 
         return ResponseEntity.ok(products);
     }
+    @GetMapping("/smartSearch")
+    private ResponseEntity<List<Products>> smartSearch(@RequestParam String search) throws JsonProcessingException {
+
+
+        List<Products> products = productService.smartSearch(search);
+
+        return ResponseEntity.ok(products);
+    }
     @GetMapping("/getProductStatusK")
     private ResponseEntity<Page<Products>> getAllProductK(@RequestParam int size,@RequestParam int page,@RequestParam(required = false) Integer status){
         Pageable pageable=PageRequest.of(page,size);
@@ -55,10 +64,10 @@ public class ProductController {
         String csvFile = "data.csv";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile));
              CSVPrinter csvPrinter = new CSVPrinter(writer,
-                     CSVFormat.DEFAULT.withHeader("id", "name", "discription"));) {
+                     CSVFormat.DEFAULT.withHeader("id", "name","type", "discription"));) {
           List<Products> a= products.get().collect(Collectors.toList());
             for (Products a1:a){
-                csvPrinter.printRecord(a1.getId(),a1.getProductName(),a1.getInfo());
+                csvPrinter.printRecord(a1.getId(),a1.getProductName().replace(",","").toLowerCase(),a1.getProductType(),a1.getProductName().replace(",","").toLowerCase()+a1.getInfo());
             }
         } catch (IOException e) {
             e.printStackTrace();

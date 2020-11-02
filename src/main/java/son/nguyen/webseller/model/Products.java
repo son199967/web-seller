@@ -116,9 +116,16 @@ public class Products implements Serializable {
         for (String a:this.getProductInfo()){
             stringBuffer.append(a).append(" ");
         }
-        return stringBuffer.toString();
+        String s = stringBuffer.toString().toLowerCase().replace("\"","\\\"").replace("●","");
+return s;
+
     }
 
+    public static void main(String[] args) {
+        String x="\"abcd";
+        String z=x.replace("\"", "");
+        System.out.println(z);
+    }
     public String getTags() {
         return tags;
     }

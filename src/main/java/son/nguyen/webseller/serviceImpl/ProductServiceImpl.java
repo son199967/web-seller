@@ -1,15 +1,17 @@
 package son.nguyen.webseller.serviceImpl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import son.nguyen.webseller.model.Products;
 import son.nguyen.webseller.repository.ProductDetailRepository;
 import son.nguyen.webseller.repository.ProductRepository;
 import son.nguyen.webseller.service.ProductService;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,5 +156,24 @@ public class ProductServiceImpl implements ProductService {
        products.get().setStatus(status);
        productRepository.save(products.get());
        return products.get();
+    }
+
+    @Override
+    public List<Products>   smartSearch(String search) throws JsonProcessingException {
+        ObjectMapper objectMapper =new ObjectMapper();
+         String  url="http://127.0.0.1:5000/?search="+search;
+        RestTemplate restTemplate =new RestTemplate();
+        String resulfK= restTemplate.getForObject(url,String.class);
+        Long[] ids = objectMapper.readValue(resulfK, Long[].class);
+
+        List<Products> products =new ArrayList<>();
+
+        for (Long id:ids){
+            Optional<Products> products1 = productRepository.getById(id);
+            if (products1.isPresent()){
+                products.add(products1.get());
+            }
+        }
+        return products;
     }
 }

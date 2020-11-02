@@ -1,5 +1,6 @@
 package son.nguyen.webseller.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import son.nguyen.webseller.model.Products;
@@ -21,7 +22,7 @@ public interface ProductService {
     void deleteProductByid(Long id);
    List <String> getAllBranch(String tag,String provider,String productType);
    Products updateProductStatus(Long id,int status);
-
+   List<Products> smartSearch(String search) throws JsonProcessingException;
 
 
 
